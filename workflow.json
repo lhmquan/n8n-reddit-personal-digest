@@ -1,0 +1,47 @@
+{
+  "name": "Reddit Personal Read-Only Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 12 }] }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "resource": "post",
+        "operation": "getAll",
+        "subreddit": "selfhosted",
+        "limit": 15
+      },
+      "name": "Get Subreddit Posts (Read-Only)",
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "resource": "postComment",
+        "operation": "getAll",
+        "subreddit": "selfhosted",
+        "postId": "={{ $json.id }}",
+        "limit": 20
+      },
+      "name": "Get Post Replies (Read-Only)",
+      "type": "n8n-nodes-base.reddit",
+      "typeVersion": 1,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [[{ "node": "Get Subreddit Posts (Read-Only)", "type": "main", "index": 0 }]]
+    },
+    "Get Subreddit Posts (Read-Only)": {
+      "main": [[{ "node": "Get Post Replies (Read-Only)", "type": "main", "index": 0 }]]
+    }
+  }
+}
